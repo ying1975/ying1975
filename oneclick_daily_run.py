@@ -80,6 +80,22 @@ def _write_run_status(
     lines.append(f"result: {result}")          # SUCCESS / FAILED
     lines.append(f"used_core: {used_core}")    # PRIMARY / FALLBACK / NONE
     lines.append(f"log: {log_path}")
+
+    # Output existence checks (defensive)
+    out_exists = output_path.exists()
+    out_size = output_path.stat().st_size if out_exists else 0
+
+    top_exists = False
+    top_size = 0
+    if top20_path:
+        top_exists = top20_path.exists()
+        top_size = top20_path.stat().st_size if top_exists else 0
+
+    lines.append(f"output_exists: {out_exists}")
+    lines.append(f"output_bytes: {out_size}")
+    lines.append(f"top20_exists: {top_exists}")
+    lines.append(f"top20_bytes: {top_size}")
+
     if primary_rc is not None:
         lines.append(f"primary_returncode: {primary_rc}")
     if fallback_rc is not None:
