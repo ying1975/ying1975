@@ -1,26 +1,17 @@
 # oneclick_daily_run.py
 # TradingSystem - Oneclick runner with fallback (Windows-friendly)
 #
-# What it does:
-# 1) Run primary pipeline via subprocess (so imports are clean and deterministic)
-# 2) If primary fails, automatically run fallback pipeline from fallback_core/
-# 3) Write logs to logs/oneclick_YYYYMMDD_HHMMSS.log
+# Enhancements:
+# 1) Log filename includes mode + input stem
+# 2) Write RUN_STATUS.txt next to output file to indicate PRIMARY/FALLBACK and errors
 #
-# Assumptions (customizable by args):
-# - Primary scripts live in this folder (default: current script folder)
-# - Fallback scripts live in: <base_dir>/fallback_core/
-# - Both primary and fallback provide: daily_auto_run_final.py, strategy_score.py, export_top20.py
-#
-# Usage example:
+# Usage:
 #   python oneclick_daily_run.py --mode pre --input test.csv --output out.csv --top20 top20.csv
-#
-# If you omit --input/--output, it will not guess; it will stop with a clear message.
 
 from __future__ import annotations
 
 import argparse
 import datetime as dt
-import os
 import subprocess
 import sys
 from pathlib import Path
@@ -35,10 +26,72 @@ def _ensure_dir(p: Path) -> None:
     p.mkdir(parents=True, exist_ok=True)
 
 
-def _write_header(log_path: Path, text: str) -> None:
-    _ensure_dir(log_path.parent)
-    with log_path.open("a", encoding="utf-8") as f:
+def _sanitize_token(s: str, max_len: int = 60) -> str:
+    """
+    Make a string safe for filenames:
+    keep [A-Za-z0-9._-], convert others to '_', and trim.
+    """
+    out = []
+    for ch in s:
+        if ch.isalnum() or ch in "._-":
+            out.append(ch)
+        else:
+            out.append("_")
+    t = "".join(out).strip("._-")
+    if not t:
+        t = "NA"
+    return t[:max_len]
+
+
+def _write_line(path: Path, text: str) -> None:
+    _ensure_dir(path.parent)
+    with path.open("a", encoding="utf-8") as f:
         f.write(text + "\n")
+
+
+def _write_header(log_path: Path, text: str) -> None:
+    _write_line(log_path, text)
+
+
+def _write_run_status(
+    status_path: Path,
+    mode: str,
+    input_path: Path,
+    output_path: Path,
+    top20_path: Optional[Path],
+    result: str,
+    used_core: str,
+    log_path: Path,
+    primary_rc: Optional[int] = None,
+    fallback_rc: Optional[int] = None,
+    primary_error: Optional[str] = None,
+    fallback_error: Optional[str] = None,
+) -> None:
+    """
+    Write a single status file next to output, always overwritten each run.
+    """
+    _ensure_dir(status_path.parent)
+    lines = []
+    lines.append(f"timestamp: {dt.datetime.now().isoformat(timespec='seconds')}")
+    lines.append(f"mode: {mode}")
+    lines.append(f"input: {input_path}")
+    lines.append(f"output: {output_path}")
+    lines.append(f"top20: {top20_path if top20_path else ''}")
+    lines.append(f"result: {result}")          # SUCCESS / FAILED
+    lines.append(f"used_core: {used_core}")    # PRIMARY / FALLBACK / NONE
+    lines.append(f"log: {log_path}")
+    if primary_rc is not None:
+        lines.append(f"primary_returncode: {primary_rc}")
+    if fallback_rc is not None:
+        lines.append(f"fallback_returncode: {fallback_rc}")
+    if primary_error:
+        lines.append("primary_error:")
+        lines.append(primary_error)
+    if fallback_error:
+        lines.append("fallback_error:")
+        lines.append(fallback_error)
+
+    status_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
 def _run_subprocess(
@@ -58,7 +111,6 @@ def _run_subprocess(
     _write_header(log_path, f"[RUN] cwd={cwd}")
     _write_header(log_path, f"[CMD] {' '.join(cmd)}")
 
-    # Use text mode, merge stderr into stdout
     proc = subprocess.Popen(
         cmd,
         cwd=str(cwd),
@@ -72,9 +124,7 @@ def _run_subprocess(
     assert proc.stdout is not None
     with log_path.open("a", encoding="utf-8") as lf:
         for line in proc.stdout:
-            # echo to console
             print(line, end="")
-            # write to log
             lf.write(line)
 
     proc.wait()
@@ -99,7 +149,7 @@ def _validate_paths(input_path: Optional[str], output_path: Optional[str]) -> No
 
 
 def main() -> None:
-    p = argparse.ArgumentParser(description="Oneclick daily run with fallback")
+    p = argparse.ArgumentParser(description="Oneclick daily run with fallback + status")
     p.add_argument("--mode", default="pre", choices=["pre", "post"], help="Run mode (compat)")
     p.add_argument("--input", default="", help="Input dataset path (.csv/.parquet/.feather)")
     p.add_argument("--output", default="", help="Output enriched dataset path")
@@ -114,56 +164,125 @@ def main() -> None:
     base_dir = Path(args.base).resolve() if args.base.strip() else Path(__file__).resolve().parent
     fallback_dir = Path(args.fallback_dir).resolve() if args.fallback_dir.strip() else (base_dir / "fallback_core")
 
+    input_path = Path(args.input).resolve()
+    output_path = Path(args.output).resolve()
+    top20_path = Path(args.top20).resolve() if args.top20.strip() else None
+
+    # Status file lives next to output
+    status_path = output_path.parent / "RUN_STATUS.txt"
+
+    # Log filename includes mode + input stem (sanitized)
     logs_dir = base_dir / "logs"
-    log_path = logs_dir / f"oneclick_{_now_str()}.log"
     _ensure_dir(logs_dir)
+    token_mode = _sanitize_token(args.mode)
+    token_input = _sanitize_token(input_path.stem)
+    log_path = logs_dir / f"oneclick_{token_mode}_{token_input}_{_now_str()}.log"
 
     _write_header(log_path, f"[START] {dt.datetime.now().isoformat(timespec='seconds')}")
     _write_header(log_path, f"[BASE] {base_dir}")
     _write_header(log_path, f"[FALLBACK] {fallback_dir}")
+    _write_header(log_path, f"[INPUT] {input_path}")
+    _write_header(log_path, f"[OUTPUT] {output_path}")
+    _write_header(log_path, f"[TOP20] {top20_path if top20_path else ''}")
 
-    input_path = str(Path(args.input).resolve())
-    output_path = str(Path(args.output).resolve())
-    top20_path = args.top20.strip() or None
-    if top20_path:
-        top20_path = str(Path(top20_path).resolve())
+    daily_args = _build_daily_args(str(input_path), str(output_path), str(top20_path) if top20_path else None, args.mode)
 
-    daily_args = _build_daily_args(input_path, output_path, top20_path, args.mode)
-
-    # -------- Primary run (current core) --------
+    # -------- Primary run --------
     primary_script = base_dir / "daily_auto_run_final.py"
     if not primary_script.exists():
+        _write_run_status(
+            status_path=status_path,
+            mode=args.mode,
+            input_path=input_path,
+            output_path=output_path,
+            top20_path=top20_path,
+            result="FAILED",
+            used_core="NONE",
+            log_path=log_path,
+            primary_error=f"Primary script not found: {primary_script}",
+        )
         raise SystemExit(f"Primary script not found: {primary_script}")
 
     print(f"\n[PRIMARY] Running: {primary_script}")
-    rc1, tag1 = _run_subprocess(args.python, primary_script, daily_args, cwd=base_dir, log_path=log_path)
+    rc1, _ = _run_subprocess(args.python, primary_script, daily_args, cwd=base_dir, log_path=log_path)
 
     if rc1 == 0:
+        _write_run_status(
+            status_path=status_path,
+            mode=args.mode,
+            input_path=input_path,
+            output_path=output_path,
+            top20_path=top20_path,
+            result="SUCCESS",
+            used_core="PRIMARY",
+            log_path=log_path,
+            primary_rc=rc1,
+        )
         print(f"\n[SUCCESS] Primary run completed. Log: {log_path}")
+        print(f"[STATUS] {status_path}")
         return
 
     print(f"\n[PRIMARY FAILED] returncode={rc1}. Switching to fallback... (Log: {log_path})")
 
-    # -------- Fallback run (fallback_core/) --------
+    # -------- Fallback run --------
     fallback_script = fallback_dir / "daily_auto_run_final.py"
     if not fallback_script.exists():
+        _write_run_status(
+            status_path=status_path,
+            mode=args.mode,
+            input_path=input_path,
+            output_path=output_path,
+            top20_path=top20_path,
+            result="FAILED",
+            used_core="NONE",
+            log_path=log_path,
+            primary_rc=rc1,
+            fallback_error=f"Fallback script not found: {fallback_script}",
+        )
         print("\n[FALLBACK NOT AVAILABLE]")
         print(f"Expected fallback script at: {fallback_script}")
         print("Create fallback core folder and place these files inside:")
         print("  - daily_auto_run_final.py")
         print("  - strategy_score.py")
         print("  - export_top20.py")
-        print("\nThen re-run the same command.")
         raise SystemExit(2)
 
     print(f"\n[FALLBACK] Running: {fallback_script}")
-    rc2, tag2 = _run_subprocess(args.python, fallback_script, daily_args, cwd=fallback_dir, log_path=log_path)
+    rc2, _ = _run_subprocess(args.python, fallback_script, daily_args, cwd=fallback_dir, log_path=log_path)
 
     if rc2 == 0:
+        _write_run_status(
+            status_path=status_path,
+            mode=args.mode,
+            input_path=input_path,
+            output_path=output_path,
+            top20_path=top20_path,
+            result="SUCCESS",
+            used_core="FALLBACK",
+            log_path=log_path,
+            primary_rc=rc1,
+            fallback_rc=rc2,
+        )
         print(f"\n[SUCCESS] Fallback run completed. Log: {log_path}")
+        print(f"[STATUS] {status_path}")
         return
 
+    _write_run_status(
+        status_path=status_path,
+        mode=args.mode,
+        input_path=input_path,
+        output_path=output_path,
+        top20_path=top20_path,
+        result="FAILED",
+        used_core="NONE",
+        log_path=log_path,
+        primary_rc=rc1,
+        fallback_rc=rc2,
+        primary_error=f"Primary failed with returncode={rc1}",
+        fallback_error=f"Fallback failed with returncode={rc2}",
+    )
     print(f"\n[FAILED] Fallback also failed (returncode={rc2}). Log: {log_path}")
+    print(f"[STATUS] {status_path}")
     raise SystemExit(3)
 
 
