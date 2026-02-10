@@ -1,17 +1,27 @@
 # oneclick_daily_run.py
-# TradingSystem - Oneclick runner with fallback (Windows-friendly)
+# TradingSystem - Oneclick runner with 2-level protection + hard output validation
 #
-# Enhancements:
-# 1) Log filename includes mode + input stem
-# 2) Write RUN_STATUS.txt next to output file to indicate PRIMARY/FALLBACK and errors
+# Features:
+# - PRIMARY run via daily_auto_run_final.py (in base_dir)
+# - If PRIMARY fails OR outputs are missing/empty -> FALLBACK run (fallback_core/daily_auto_run_final.py)
+# - Log filename includes mode + input stem
+# - Writes RUN_STATUS.txt next to output:
+#     - result / used_core / returncodes
+#     - output/top20 exists + bytes
+#     - output/top20 sha256
+# - --dry_run: validate only, no execution
+# - --self_check: if input missing, auto-create a minimal test CSV at --input path
 #
 # Usage:
 #   python oneclick_daily_run.py --mode pre --input test.csv --output out.csv --top20 top20.csv
+#   python oneclick_daily_run.py --dry_run --mode pre --input test.csv --output out.csv
+#   python oneclick_daily_run.py --self_check --mode pre --input self_test.csv --output out.csv --top20 top20.csv
 
 from __future__ import annotations
 
 import argparse
 import datetime as dt
+import hashlib
 import subprocess
 import sys
 from pathlib import Path
@@ -43,6 +53,11 @@ def _sanitize_token(s: str, max_len: int = 60) -> str:
     return t[:max_len]
 
 
+def _banner(text: str) -> str:
+    bar = "!" * 80
+    return f"\n{bar}\n{text}\n{bar}\n"
+
+
 def _write_line(path: Path, text: str) -> None:
     _ensure_dir(path.parent)
     with path.open("a", encoding="utf-8") as f:
@@ -53,14 +68,41 @@ def _write_header(log_path: Path, text: str) -> None:
     _write_line(log_path, text)
 
 
+def _sha256_file(path: Path) -> str:
+    h = hashlib.sha256()
+    with path.open("rb") as f:
+        for chunk in iter(lambda: f.read(1024 * 1024), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def _check_outputs_or_raise(output_path: Path, top20_path: Optional[Path]) -> None:
+    """
+    Hard guard:
+    - output must exist and size > 0
+    - if top20_path is provided, it must exist and size > 0
+    Otherwise raise RuntimeError to trigger fallback or final failure.
+    """
+    if not output_path.exists():
+        raise RuntimeError(f"Output file not created: {output_path}")
+    if output_path.stat().st_size == 0:
+        raise RuntimeError(f"Output file is empty: {output_path}")
+
+    if top20_path:
+        if not top20_path.exists():
+            raise RuntimeError(f"Top20 file not created: {top20_path}")
+        if top20_path.stat().st_size == 0:
+            raise RuntimeError(f"Top20 file is empty: {top20_path}")
+
+
 def _write_run_status(
     status_path: Path,
     mode: str,
     input_path: Path,
     output_path: Path,
     top20_path: Optional[Path],
-    result: str,
-    used_core: str,
+    result: str,          # SUCCESS / FAILED
+    used_core: str,       # PRIMARY / FALLBACK / NONE
     log_path: Path,
     primary_rc: Optional[int] = None,
     fallback_rc: Optional[int] = None,
@@ -69,19 +111,10 @@ def _write_run_status(
 ) -> None:
     """
     Write a single status file next to output, always overwritten each run.
+    Includes existence/size and sha256 (when files exist and are non-empty).
     """
     _ensure_dir(status_path.parent)
-    lines = []
-    lines.append(f"timestamp: {dt.datetime.now().isoformat(timespec='seconds')}")
-    lines.append(f"mode: {mode}")
-    lines.append(f"input: {input_path}")
-    lines.append(f"output: {output_path}")
-    lines.append(f"top20: {top20_path if top20_path else ''}")
-    lines.append(f"result: {result}")          # SUCCESS / FAILED
-    lines.append(f"used_core: {used_core}")    # PRIMARY / FALLBACK / NONE
-    lines.append(f"log: {log_path}")
 
-    # Output existence checks (defensive)
     out_exists = output_path.exists()
     out_size = output_path.stat().st_size if out_exists else 0
 
@@ -91,15 +124,31 @@ def _write_run_status(
         top_exists = top20_path.exists()
         top_size = top20_path.stat().st_size if top_exists else 0
 
-    lines.append(f"output_exists: {out_exists}")
-    lines.append(f"output_bytes: {out_size}")
-    lines.append(f"top20_exists: {top_exists}")
-    lines.append(f"top20_bytes: {top_size}")
+    output_sha256 = _sha256_file(output_path) if out_exists and out_size > 0 else ""
+    top20_sha256 = _sha256_file(top20_path) if top20_path and top_exists and top_size > 0 else ""
+
+    lines = []
+    lines.append(f"timestamp: {dt.datetime.now().isoformat(timespec='seconds')}")
+    lines.append(f"mode: {mode}")
+    lines.append(f"input: {input_path}")
+    lines.append(f"output: {output_path}")
+    lines.append(f"top20: {top20_path if top20_path else ''}")
+    lines.append(f"result: {result}")
+    lines.append(f"used_core: {used_core}")
+    lines.append(f"log: {log_path}")
 
     if primary_rc is not None:
         lines.append(f"primary_returncode: {primary_rc}")
     if fallback_rc is not None:
         lines.append(f"fallback_returncode: {fallback_rc}")
+
+    lines.append(f"output_exists: {out_exists}")
+    lines.append(f"output_bytes: {out_size}")
+    lines.append(f"top20_exists: {top_exists}")
+    lines.append(f"top20_bytes: {top_size}")
+    lines.append(f"output_sha256: {output_sha256}")
+    lines.append(f"top20_sha256: {top20_sha256}")
+
     if primary_error:
         lines.append("primary_error:")
         lines.append(primary_error)
@@ -116,10 +165,9 @@ def _run_subprocess(
     args: list[str],
     cwd: Path,
     log_path: Path,
-) -> Tuple[int, str]:
+) -> int:
     """
-    Returns (returncode, phase_tag)
-    Streams stdout/stderr to both console and log file.
+    Returns returncode. Streams stdout/stderr to both console and log file.
     """
     cmd = [python_exe, str(script_path)] + args
 
@@ -144,18 +192,18 @@ def _run_subprocess(
             lf.write(line)
 
     proc.wait()
-    return proc.returncode, "OK" if proc.returncode == 0 else "FAIL"
+    return proc.returncode
 
 
-def _build_daily_args(input_path: str, output_path: str, top20_path: Optional[str], mode: str) -> list[str]:
-    a = ["--input", input_path, "--output", output_path, "--mode", mode]
+def _build_daily_args(input_path: Path, output_path: Path, top20_path: Optional[Path], mode: str) -> list[str]:
+    a = ["--input", str(input_path), "--output", str(output_path), "--mode", mode]
     if top20_path:
-        a += ["--top20", top20_path]
+        a += ["--top20", str(top20_path)]
     return a
 
 
-def _validate_paths(input_path: Optional[str], output_path: Optional[str]) -> None:
-    if not input_path or not output_path:
+def _validate_args(input_s: str, output_s: str) -> None:
+    if not input_s or not output_s:
         raise SystemExit(
             "Missing required args.\n"
             "You must provide: --input <file> --output <file>\n"
@@ -165,7 +213,7 @@ def _validate_paths(input_path: Optional[str], output_path: Optional[str]) -> No
 
 
 def main() -> None:
-    p = argparse.ArgumentParser(description="Oneclick daily run with fallback + status")
+    p = argparse.ArgumentParser(description="Oneclick daily run with fallback + status + hashing")
     p.add_argument("--mode", default="pre", choices=["pre", "post"], help="Run mode (compat)")
     p.add_argument("--input", default="", help="Input dataset path (.csv/.parquet/.feather)")
     p.add_argument("--output", default="", help="Output enriched dataset path")
@@ -173,9 +221,11 @@ def main() -> None:
     p.add_argument("--base", default="", help="Base dir (default: folder of this script)")
     p.add_argument("--fallback_dir", default="", help="Fallback core dir (default: <base>/fallback_core)")
     p.add_argument("--python", default=sys.executable, help="Python executable path (default: current)")
+    p.add_argument("--dry_run", action="store_true", help="Validate args/env only, do not run pipeline")
+    p.add_argument("--self_check", action="store_true", help="If input missing, create minimal test CSV at --input then run")
     args = p.parse_args()
 
-    _validate_paths(args.input.strip() or None, args.output.strip() or None)
+    _validate_args(args.input.strip(), args.output.strip())
 
     base_dir = Path(args.base).resolve() if args.base.strip() else Path(__file__).resolve().parent
     fallback_dir = Path(args.fallback_dir).resolve() if args.fallback_dir.strip() else (base_dir / "fallback_core")
@@ -196,16 +246,78 @@ def main() -> None:
 
     _write_header(log_path, f"[START] {dt.datetime.now().isoformat(timespec='seconds')}")
     _write_header(log_path, f"[BASE] {base_dir}")
-    _write_header(log_path, f"[FALLBACK] {fallback_dir}")
+    _write_header(log_path, f"[FALLBACK_DIR] {fallback_dir}")
     _write_header(log_path, f"[INPUT] {input_path}")
     _write_header(log_path, f"[OUTPUT] {output_path}")
     _write_header(log_path, f"[TOP20] {top20_path if top20_path else ''}")
 
-    daily_args = _build_daily_args(str(input_path), str(output_path), str(top20_path) if top20_path else None, args.mode)
+    # Ensure parent dirs exist for outputs
+    _ensure_dir(output_path.parent)
+    if top20_path:
+        _ensure_dir(top20_path.parent)
+
+    # --- dry-run: validate only ---
+    if args.dry_run:
+        problems = []
+        primary_script = base_dir / "daily_auto_run_final.py"
+        if not primary_script.exists():
+            problems.append(f"Primary script missing: {primary_script}")
+        if not input_path.exists():
+            problems.append(f"Input missing: {input_path}")
+
+        if not problems:
+            _write_run_status(
+                status_path=status_path,
+                mode=args.mode,
+                input_path=input_path,
+                output_path=output_path,
+                top20_path=top20_path,
+                result="SUCCESS",
+                used_core="NONE",
+                log_path=log_path,
+                primary_error="DRY_RUN: OK (no execution)",
+            )
+            print("[DRY_RUN] OK. No execution performed.")
+            print(f"[STATUS] {status_path}")
+            return
+
+        msg = "DRY_RUN failed:\n" + "\n".join(f"- {x}" for x in problems)
+        _write_run_status(
+            status_path=status_path,
+            mode=args.mode,
+            input_path=input_path,
+            output_path=output_path,
+            top20_path=top20_path,
+            result="FAILED",
+            used_core="NONE",
+            log_path=log_path,
+            primary_error=msg,
+        )
+        print(msg)
+        print(f"[STATUS] {status_path}")
+        raise SystemExit(10)
+
+    # --- self-check: ensure test input exists or create it ---
+    if args.self_check:
+        if not input_path.exists():
+            _ensure_dir(input_path.parent)
+            input_path.write_text(
+                "code,name,market,close,volume,trade_value,turnover,short_used_ratio,margin_used_ratio\n"
+                "2330,TSMC,TWSE,600,1000000,600000000,0.08,0.05,0.20\n"
+                "2317,HonHai,TWSE,120,2000000,240000000,0.05,0.02,0.10\n"
+                "6488,GlobalWafers,TWO,900,300000,270000000,0.10,0.12,0.45\n",
+                encoding="utf-8",
+            )
+            msg = f"[SELF_CHECK] Created test input: {input_path}"
+            print(msg)
+            _write_header(log_path, msg)
+
+    daily_args = _build_daily_args(input_path, output_path, top20_path, args.mode)
 
     # -------- Primary run --------
     primary_script = base_dir / "daily_auto_run_final.py"
     if not primary_script.exists():
+        err = f"Primary script not found: {primary_script}"
         _write_run_status(
             status_path=status_path,
             mode=args.mode,
@@ -215,34 +327,45 @@ def main() -> None:
             result="FAILED",
             used_core="NONE",
             log_path=log_path,
-            primary_error=f"Primary script not found: {primary_script}",
+            primary_error=err,
         )
-        raise SystemExit(f"Primary script not found: {primary_script}")
+        raise SystemExit(err)
 
     print(f"\n[PRIMARY] Running: {primary_script}")
-    rc1, _ = _run_subprocess(args.python, primary_script, daily_args, cwd=base_dir, log_path=log_path)
+    rc1 = _run_subprocess(args.python, primary_script, daily_args, cwd=base_dir, log_path=log_path)
 
     if rc1 == 0:
-        _write_run_status(
-            status_path=status_path,
-            mode=args.mode,
-            input_path=input_path,
-            output_path=output_path,
-            top20_path=top20_path,
-            result="SUCCESS",
-            used_core="PRIMARY",
-            log_path=log_path,
-            primary_rc=rc1,
-        )
-        print(f"\n[SUCCESS] Primary run completed. Log: {log_path}")
-        print(f"[STATUS] {status_path}")
-        return
+        try:
+            _check_outputs_or_raise(output_path, top20_path)
+            _write_run_status(
+                status_path=status_path,
+                mode=args.mode,
+                input_path=input_path,
+                output_path=output_path,
+                top20_path=top20_path,
+                result="SUCCESS",
+                used_core="PRIMARY",
+                log_path=log_path,
+                primary_rc=rc1,
+            )
+            print(f"\n[SUCCESS] Primary run completed. Log: {log_path}")
+            print(f"[STATUS] {status_path}")
+            return
+        except Exception as e_out:
+            warn = _banner(f"FALLBACK TRIGGERED: PRIMARY OUTPUT INVALID: {e_out}")
+            print(warn)
+            _write_header(log_path, warn)
+            # fall through to fallback
 
-    print(f"\n[PRIMARY FAILED] returncode={rc1}. Switching to fallback... (Log: {log_path})")
+    else:
+        warn = _banner(f"FALLBACK TRIGGERED: PRIMARY FAILED (returncode={rc1})")
+        print(warn)
+        _write_header(log_path, warn)
 
     # -------- Fallback run --------
     fallback_script = fallback_dir / "daily_auto_run_final.py"
     if not fallback_script.exists():
+        err = f"Fallback script not found: {fallback_script}"
         _write_run_status(
             status_path=status_path,
             mode=args.mode,
@@ -253,35 +376,38 @@ def main() -> None:
             used_core="NONE",
             log_path=log_path,
             primary_rc=rc1,
-            fallback_error=f"Fallback script not found: {fallback_script}",
+            fallback_error=err,
         )
-        print("\n[FALLBACK NOT AVAILABLE]")
-        print(f"Expected fallback script at: {fallback_script}")
-        print("Create fallback core folder and place these files inside:")
-        print("  - daily_auto_run_final.py")
-        print("  - strategy_score.py")
-        print("  - export_top20.py")
+        print(err)
+        print(f"[STATUS] {status_path}")
         raise SystemExit(2)
 
     print(f"\n[FALLBACK] Running: {fallback_script}")
-    rc2, _ = _run_subprocess(args.python, fallback_script, daily_args, cwd=fallback_dir, log_path=log_path)
+    rc2 = _run_subprocess(args.python, fallback_script, daily_args, cwd=fallback_dir, log_path=log_path)
 
     if rc2 == 0:
-        _write_run_status(
-            status_path=status_path,
-            mode=args.mode,
-            input_path=input_path,
-            output_path=output_path,
-            top20_path=top20_path,
-            result="SUCCESS",
-            used_core="FALLBACK",
-            log_path=log_path,
-            primary_rc=rc1,
-            fallback_rc=rc2,
-        )
-        print(f"\n[SUCCESS] Fallback run completed. Log: {log_path}")
-        print(f"[STATUS] {status_path}")
-        return
+        try:
+            _check_outputs_or_raise(output_path, top20_path)
+            _write_run_status(
+                status_path=status_path,
+                mode=args.mode,
+                input_path=input_path,
+                output_path=output_path,
+                top20_path=top20_path,
+                result="SUCCESS",
+                used_core="FALLBACK",
+                log_path=log_path,
+                primary_rc=rc1,
+                fallback_rc=rc2,
+            )
+            print(f"\n[SUCCESS] Fallback run completed. Log: {log_path}")
+            print(f"[STATUS] {status_path}")
+            return
+        except Exception as e_out:
+            msg = f"Fallback rc=0 but outputs invalid: {e_out}"
+            _write_header(log_path, msg)
+            print(msg)
+            # treat as hard failure
 
     _write_run_status(
         status_path=status_path,
@@ -294,10 +420,10 @@ def main() -> None:
         log_path=log_path,
         primary_rc=rc1,
         fallback_rc=rc2,
-        primary_error=f"Primary failed with returncode={rc1}",
-        fallback_error=f"Fallback failed with returncode={rc2}",
+        primary_error=f"Primary failed or output invalid (returncode={rc1})",
+        fallback_error=f"Fallback failed or output invalid (returncode={rc2})",
     )
-    print(f"\n[FAILED] Fallback also failed (returncode={rc2}). Log: {log_path}")
+    print(f"\n[FAILED] Fallback also failed or outputs invalid. Log: {log_path}")
     print(f"[STATUS] {status_path}")
     raise SystemExit(3)
 
