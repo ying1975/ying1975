@@ -1,21 +1,20 @@
-# ===== runtime outputs (do NOT commit) =====
-HEALTH_ALERT.txt
-RUN_STATUS.txt
-RUN_STATUS.json
-run_summary.csv
-
-# ===== data outputs (do NOT commit) =====
+# Runtime outputs
+*.csv
+inbound/
+prepared/
+logs/
 data/inbound/
 data/prepared/
 data/out/
-data/daily_input.csv
+RUN_STATUS.*
+HEALTH_ALERT.txt
+run_summary.csv
 
-# ===== logs (do NOT commit) =====
-logs/
-
-# ===== python =====
+# Python
 __pycache__/
 *.pyc
 
-# ===== misc =====
-*.log
+# misc
+dict/
+cleanup_last.txt
+Path
