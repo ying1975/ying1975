@@ -1,0 +1,10 @@
+[START] 2026-02-11T23:02:55
+[BASE] C:\TradingSystem
+[FALLBACK_DIR] C:\TradingSystem\fallback_core
+[INPUT] C:\TradingSystem\daily_input.csv
+[OUTPUT_PRIMARY] C:\TradingSystem\daily_out.csv
+[TOP20_PRIMARY] C:\TradingSystem\daily_top20.csv
+
+================================================================================
+[RUN] cwd=C:\TradingSystem
+[CMD] C:\Python312\python.exe C:\TradingSystem\daily_auto_run_final.py --input C:\TradingSystem\daily_input.csv --output C:\TradingSystem\daily_out.csv --mode pre --top20 C:\TradingSystem\daily_top20.csv

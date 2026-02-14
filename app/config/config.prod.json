@@ -1,0 +1,29 @@
+{
+  "paths": {
+    "base": "C:\\TradingSystem",
+    "data_dir": "C:\\TradingSystem\\data",
+    "inbound_dir": "C:\\TradingSystem\\data\\inbound",
+    "prepared_dir": "C:\\TradingSystem\\data\\prepared",
+    "out_dir": "C:\\TradingSystem\\data\\out",
+    "logs_dir": "C:\\TradingSystem\\logs",
+    "daily_input": "C:\\TradingSystem\\data\\daily_input.csv"
+  },
+
+  "sanity": {
+    "min_ratio": 0.70,
+    "min_total_floor": 800
+  },
+
+  "retention": {
+    "logs_days": 30,
+    "inbound_days": 30,
+    "prepared_days": 60
+  },
+
+  "run": {
+    "python": "C:\\Python312\\python.exe",
+    "mode": "pre",
+    "output_csv": "C:\\TradingSystem\\data\\out\\daily_out.csv",
+    "top20_csv": "C:\\TradingSystem\\data\\out\\daily_top20.csv"
+  }
+}

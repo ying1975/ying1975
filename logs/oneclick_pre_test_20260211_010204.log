@@ -1,0 +1,6 @@
+[START] 2026-02-11T01:02:04
+[BASE] C:\TradingSystem
+[FALLBACK_DIR] C:\TradingSystem\fallback_core
+[INPUT] C:\TradingSystem\test.csv
+[OUTPUT] C:\TradingSystem\out_dry.csv
+[TOP20] 

@@ -1,0 +1,12 @@
+[START] 2026-02-12T23:52:56
+[BASE] C:\TradingSystem
+[FALLBACK_DIR] C:\TradingSystem\fallback_core
+[INPUT] C:\TradingSystem\daily_input.csv
+[OUTPUT_PRIMARY] C:\TradingSystem\precheck_out.csv
+[TOP20_PRIMARY] C:\TradingSystem\precheck_top20.csv
+[RUN_KEY_PRIMARY] pre||C:\TradingSystem\daily_input.csv||08c2b76769ae0e55a820da47c04d517bdb442f3d067d17b42a246e43c999d848||C:\TradingSystem\precheck_top20.csv
+[INPUT_SHA256] 08c2b76769ae0e55a820da47c04d517bdb442f3d067d17b42a246e43c999d848
+
+================================================================================
+[RUN] cwd=C:\TradingSystem
+[CMD] C:\Python312\python.exe C:\TradingSystem\daily_auto_run_final.py --input C:\TradingSystem\daily_input.csv --output C:\TradingSystem\precheck_out.csv --mode pre --top20 C:\TradingSystem\precheck_top20.csv

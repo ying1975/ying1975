@@ -1,0 +1,4 @@
+﻿code,name,market,trade_value,tv_rank_mkt,tv_pct_mkt,turnover,light_full,light_decision,light_top20
+6488,GlobalWafers,TWO,270000000.0,1.0,1.0,0.1,4.0,1,1
+2330,TSMC,TWSE,600000000.0,1.0,1.0,0.08,3.0,1,1
+2317,HonHai,TWSE,240000000.0,2.0,0.5,0.05,0.5,0,1
