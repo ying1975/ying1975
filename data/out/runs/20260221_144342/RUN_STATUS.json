@@ -1,0 +1,15 @@
+{
+  "updated_at": "2026-02-21 14:43:48",
+  "run_id": "20260221_144347",
+  "overall_status": "SUCCESS",
+  "mode": "pre",
+  "input": "C:\\TradingSystem\\data\\out\\runs\\20260221_144342\\prepared\\daily_input.csv",
+  "output": "C:\\TradingSystem\\data\\out\\runs\\20260221_144342\\daily_out.csv",
+  "top20": "C:\\TradingSystem\\data\\out\\runs\\20260221_144342\\daily_top20.csv",
+  "log_file": "C:\\TradingSystem\\logs\\oneclick_pre_daily_input_20260221_144347.log",
+  "primary": {
+    "script": "C:\\TradingSystem\\daily_auto_run_final.py",
+    "rc": 0,
+    "error": ""
+  }
+}

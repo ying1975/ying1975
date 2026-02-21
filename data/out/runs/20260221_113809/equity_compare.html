@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8"/>
+<title>權益曲線比較 - 20260221_113809</title>
+<style>
+body { font-family: "Microsoft JhengHei","Noto Sans TC",sans-serif; margin: 24px; }
+h1 { margin: 0 0 6px 0; }
+.meta { color: #555; margin-bottom: 16px; }
+.card { background: #fff; border: 1px solid #ddd; border-radius: 12px; padding: 16px; }
+.legend span { display: inline-block; margin-right: 14px; }
+.sw { width: 12px; height: 12px; display: inline-block; margin-right: 6px; border-radius: 2px; vertical-align: -2px; }
+.small { color:#666; font-size: 12px; }
+</style>
+</head>
+<body>
+<h1>權益曲線比較</h1>
+<div class="meta">執行編號：<b>20260221_113809</b>　|　資料：C:\TradingSystem\data\out\runs\20260221_113809\equity_compare.csv</div>
+
+<div class="card">
+<div class="legend">
+  <span><i class="sw" style="background:#1f77b4"></i>無風控</span>
+  <span><i class="sw" style="background:#ff7f0e"></i>階梯風控</span>
+  <span><i class="sw" style="background:#2ca02c"></i>連續曝險</span>
+</div>
+
+<svg width="1000" height="420" viewBox="0 0 1000.0 420.0" style="margin-top:12px">
+  <rect x="0" y="0" width="1000.0" height="420.0" fill="#ffffff" />
+  <line x1="60.0" y1="20.0" x2="60.0" y2="370.0" stroke="#999" />
+  <line x1="60.0" y1="370.0" x2="980.0" y2="370.0" stroke="#999" />
+
+  <polyline fill="none" stroke="#1f77b4" stroke-width="2" points="60.00,370.00 366.67,220.88 673.33,145.87 980.00,20.00" />
+  <polyline fill="none" stroke="#ff7f0e" stroke-width="2" points="60.00,109.73 366.67,109.73 673.33,109.73 980.00,109.73" />
+  <polyline fill="none" stroke="#2ca02c" stroke-width="2" points="60.00,109.73 366.67,109.73 673.33,109.73 980.00,109.73" />
+
+  <text x="60.0" y="402.0" font-size="12" fill="#555">日期（20260205 → 20260210）</text>
+  <text x="10" y="32.0" font-size="12" fill="#555">權益</text>
+  <text x="10" y="370.0" font-size="12" fill="#555">950,267</text>
+  <text x="10" y="36.0" font-size="12" fill="#555">1,017,147</text>
+</svg>
+
+<div class="small">提示：此圖為離線 SVG 輸出，無需網路或外部套件。</div>
+</div>
+</body>
+</html>

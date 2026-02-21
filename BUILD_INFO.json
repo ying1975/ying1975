@@ -1,4 +1,0 @@
-{
-  "version": "v7-prod",
-  "notes": "TWSE+TPEX auto fetch, stock-only universe, schema-guarded oneclick, retention+health gate"
-}

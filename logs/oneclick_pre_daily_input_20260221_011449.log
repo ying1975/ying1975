@@ -1,0 +1,4 @@
+
+===== 2026-02-21 01:14:49 RUN =====
+CMD: C:\Python312\python.exe C:\TradingSystem\daily_auto_run_final.py --mode pre --input C:\TradingSystem\data\out\runs\20260221_011447\prepared\daily_input.csv --output C:\TradingSystem\data\out\runs\20260221_011447\daily_out.csv --top20 C:\TradingSystem\data\out\runs\20260221_011447\daily_top20.csv
+RC: 0

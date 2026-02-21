@@ -1,0 +1,39 @@
+===============================
+[V7] RUN_REPORT
+RUN_ID=TEST_RPT
+RUN_DIR=C:\TradingSystem\data\out\runs\TEST_RPT
+PYTHONPATH=C:\TradingSystem
+BT_ROOT=C:\TradingSystem\data\out\_bt_tmp
+===============================
+[RUN_REPORT] BT_DAYS_NUM=5
+[DBG] after count
+[RUN_REPORT] BT_ROOT OK: days=5
+[DBG] entering steps
+===============================
+[V7] STEP: EQUITY_COMPARE
+===============================
+[CMD]   "C:\Python312\python.exe" "C:\TradingSystem\app\backtest\strategy_with_risk.py"   --run_id "TEST_RPT"   --out_dir "C:\TradingSystem\data\out\runs\TEST_RPT"   --bt_root "C:\TradingSystem\data\out\_bt_tmp"   --strategy trade_value   --topN 5   --risk_on 0.55   --risk_mid 0.48
+[RISK_EQ] 20260205 br=0.000 expo_none=1.00 expo_tier=0.00 expo_cont=0.00 used=5 ret=-0.04973
+[RISK_EQ] 20260206 br=0.000 expo_none=1.00 expo_tier=0.00 expo_cont=0.00 used=5 ret=0.02999
+[RISK_EQ] 20260209 br=0.000 expo_none=1.00 expo_tier=0.00 expo_cont=0.00 used=5 ret=0.01464
+[RISK_EQ] 20260210 br=0.000 expo_none=1.00 expo_tier=0.00 expo_cont=0.00 used=5 ret=0.02422
+[SAVED] C:\TradingSystem\data\out\runs\TEST_RPT\equity_compare.csv
+[SAVED] C:\TradingSystem\data\out\runs\TEST_RPT\equity_compare_summary.json
+===============================
+[V7] STEP: PLOT_EQUITY
+===============================
+[CMD]   "C:\Python312\python.exe" "C:\TradingSystem\app\backtest\plot_equity_compare.py"   --run_id "TEST_RPT"   --out_dir "C:\TradingSystem\data\out\runs\TEST_RPT"
+[PLOT] saved: C:\TradingSystem\data\out\runs\TEST_RPT\equity_compare.html
+===============================
+[V7] STEP: GEN_REPORT_HTML
+===============================
+[CMD]   "C:\Python312\python.exe" "C:\TradingSystem\app\backtest\generate_report.py"   --run_id "TEST_RPT"   --out_dir "C:\TradingSystem\data\out\runs\TEST_RPT"
+[REPORT] saved: C:\TradingSystem\data\out\runs\TEST_RPT\reports\report_TEST_RPT.html
+===============================
+[V7] STEP: GEN_REPORT_PDF
+===============================
+[CMD]   "C:\Python312\python.exe" "C:\TradingSystem\app\backtest\generate_report_pdf.py"   --run_id "TEST_RPT"   --out_dir "C:\TradingSystem\data\out\runs\TEST_RPT"
+[PDF] saved: C:\TradingSystem\data\out\runs\TEST_RPT\reports\report_TEST_RPT.pdf
+===============================
+[RUN_REPORT] OK
+===============================

@@ -1,0 +1,13 @@
+updated_at: 2026-02-21 00:48:40
+run_id: 20260221_004839
+overall_status: SUCCESS
+
+mode: pre
+input: C:\TradingSystem\data\out\runs\20260221_004837\prepared\daily_input.csv
+output: C:\TradingSystem\data\out\runs\20260221_004837\daily_out.csv
+top20: C:\TradingSystem\data\out\runs\20260221_004837\daily_top20.csv
+log_file: C:\TradingSystem\logs\oneclick_pre_daily_input_20260221_004839.log
+
+[primary]
+  script: C:\TradingSystem\daily_auto_run_final.py
+  rc: 0

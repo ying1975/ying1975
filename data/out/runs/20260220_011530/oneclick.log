@@ -1,0 +1,7 @@
+[ONECLICK] start
+
+[FAILED] Primary core failed, and fallback_core also failed.
+[PRIMARY ERROR] rc=1; output_schema_failed_missing=['file_missing_or_empty']
+[FALLBACK ERROR] rc=2; output_schema_failed_missing=['file_missing_or_empty']
+[STATUS] C:\TradingSystem\data\out\runs\20260220_011530\RUN_STATUS.txt
+[ONECLICK] oneclick_daily_run failed rc=

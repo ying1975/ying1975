@@ -1,0 +1,5 @@
+TradingSystem V7.0 Stable
+Report: zh-TW (Traditional Chinese) formal edition
+PDF: Chinese font supported (TTF preferred, CID fallback MSung-Light)
+Build: run_id isolated (no "latest" dependency)
+Python: 3.12

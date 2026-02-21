@@ -1,0 +1,7 @@
+===============================
+[V7] RUN_REPORT
+RUN_ID=TEST_RPT
+RUN_DIR=C:\TradingSystem\data\out\runs\TEST_RPT
+PYTHONPATH=C:\TradingSystem
+BT_ROOT=C:\TradingSystem\data\out\_bt_tmp
+===============================

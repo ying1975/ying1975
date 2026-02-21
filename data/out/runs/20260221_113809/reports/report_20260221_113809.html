@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8"/>
+<title>策略回測正式報告 - 20260221_113809</title>
+<style>
+:root {
+  --bg:#f6f7f9; --card:#fff; --text:#111; --muted:#666; --line:#ddd; --h:#0b1320;
+}
+body {
+  font-family: "Microsoft JhengHei","Noto Sans TC",sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  margin: 0;
+}
+.container { max-width: 1020px; margin: 28px auto; padding: 0 18px; }
+.header {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px 18px 10px 18px;
+}
+h1 { margin: 0 0 6px 0; color: var(--h); font-size: 24px; }
+.meta { color: var(--muted); font-size: 13px; line-height: 1.6; }
+.card {
+  margin-top: 14px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px 18px;
+}
+h2 { margin: 0 0 10px 0; font-size: 18px; color: var(--h); }
+table { width:100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; }
+th, td { border-bottom: 1px solid #eee; padding: 10px 8px; text-align: right; vertical-align: top; }
+th { background: #0b1320; color:#fff; font-weight: 600; }
+td.left { text-align:left; }
+.note { color: var(--muted); font-size: 12px; margin-top: 8px; }
+code { background:#f1f3f5; padding:2px 6px; border-radius: 6px; }
+.badge {
+  display:inline-block; padding: 2px 8px; border-radius: 999px; background:#eef2ff; color:#3142d0;
+  font-size: 12px; margin-left: 8px;
+}
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+/* Name auto-wrap */
+.namewrap {
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <h1>策略回測正式報告 <span class="badge">繁體中文</span></h1>
+    <div class="meta">
+      執行編號：<b>20260221_113809</b><br/>
+      產生時間：2026-02-21 14:27:42<br/>
+      回測資料夾：<code>C:\TradingSystem\data\out\_bt_tmp</code><br/>
+      回測有效天數：<b>4</b>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>績效摘要（含成本）</h2>
+    <table>
+      <thead>
+        <tr>
+          <th style="text-align:left">策略類型</th>
+          <th>總報酬</th>
+          <th>夏普比率</th>
+          <th>最大回撤</th>
+          <th>交易天數</th>
+          <th>空手天數</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+        <tr>
+          <td class="left">無風控</td>
+          <td>1.71468%</td>
+          <td>2.05663</td>
+          <td>4.97332%</td>
+          <td>4</td>
+          <td>0</td>
+        </tr>
+        
+        
+        <tr>
+          <td class="left">階梯風控</td>
+          <td>0.00000%</td>
+          <td>0.00000</td>
+          <td>0.00000%</td>
+          <td>0</td>
+          <td>4</td>
+        </tr>
+        
+        
+        <tr>
+          <td class="left">連續曝險</td>
+          <td>0.00000%</td>
+          <td>0.00000</td>
+          <td>0.00000%</td>
+          <td>0</td>
+          <td>4</td>
+        </tr>
+        
+      </tbody>
+    </table>
+    <div class="note">註：夏普比率為簡化年化估算（252 交易日），僅供策略比較。</div>
+  </div>
+
+  
+            <div class="card">
+              <h2>今日 Top20 清單（繁中顯示）</h2>
+              <div class="note">
+                來源：<code>C:\TradingSystem\data\out\runs\20260221_113809\daily_top20.csv</code>
+              </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th style="text-align:left">代號</th>
+                    <th style="text-align:left">名稱</th>
+                    <th style="text-align:left">市場</th>
+                    <th>成交金額</th>
+                    <th>市場排名</th>
+                    <th>市場百分位</th>
+                    <th>週轉率</th>
+                    <th>FULL燈</th>
+                    <th>決策燈</th>
+                    <th>Top20燈</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  
+                    <tr>
+                      <td class="left mono">8299</td>
+                      <td class="left namewrap">群聯</td>
+                      <td class="left">TWO</td>
+                      <td>10,985,134,160</td>
+                      <td>1</td>
+                      <td>1.00000</td>
+                      <td>0.00000</td>
+                      <td>1.0</td>
+                      <td>否</td>
+                      <td>是</td>
+                    </tr>
+                    
+                    <tr>
+                      <td class="left mono">3105</td>
+                      <td class="left namewrap">穩懋</td>
+                      <td class="left">TWO</td>
+                      <td>7,911,445,410</td>
+                      <td>2</td>
+                      <td>0.99886</td>
+                      <td>0.00000</td>
+                      <td>1.0</td>
+                      <td>否</td>
+                      <td>是</td>
+                    </tr>
+                    
+                    <tr>
+                      <td class="left mono">1815</td>
+                      <td class="left namewrap">富喬</td>
+                      <td class="left">TWO</td>
+                      <td>7,626,622,112</td>
+                      <td>3</td>
+                      <td>0.99772</td>
+                      <td>0.00000</td>
+                      <td>1.0</td>
+                      <td>否</td>
+                      <td>是</td>
+                    </tr>
+                    
+                    <tr>
+                      <td class="left mono">4979</td>
+                      <td class="left namewrap">華星光</td>
+                      <td class="left">TWO</td>
+                      <td>4,709,328,387</td>
+                      <td>4</td>
+                      <td>0.99658</td>
+                      <td>0.00000</td>
+                      <td>1.0</td>
+                      <td>否</td>
+                      <td>是</td>
+                    </tr>
+                    
+                    <tr>
+                      <td class="left mono">3529</td>
+                      <td class="left namewrap">力旺</td>
+                      <td class="left">TWO</td>
+                      <td>4,336,785,990</td>
+                      <td>5</td>
+                      <td>0.99544</td>
+                      <td>0.00000</td>
+                      <td>1.0</td>
+                      <td>否</td>
+                      <td>是</td>
+                    </tr>
+                    
+                    <tr>
+                      <td class="left mono">6488</td>
+                      <td class="left namewrap">環球晶</td>
+                      <td class="left">TWO</td>
+                      <td>3,668,622,849</td>
+                      <td>6</td>
+                      <td>0.99431</td>
+                      <td>0.00000</td>
+                      <td>1.0</td>
+                      <td>否</td>
+                      <td>是</td>
+                    </tr>
+                    
+                    <tr>
+                      <td class="left mono">3324</td>
+                      <td class="left namewrap">雙鴻</td>
+                      <td class="left">TWO</td>
+                      <td>3,359,010,265</td>
+                      <td>7</td>
+                      <td>0.99317</td>
+                      <td>0.00000</td>
+                      <td>1.0</td>
+                      <td>否</td>
+                      <td>是</td>
+                    </tr>
+                    
+                    <tr>
+                      <td class="left mono">5439</td>
+                      <td class="left namewrap">高技</td>
+                      <td class="left">TWO</td>
+                      <td>3,103,536,958</td>
+                      <td>8</td>
+                      <td>0.99203</td>
+                      <td>0.00000</td>
+                      <td>1.0</td>
+                      <td>否</td>
+                      <td>是</td>
+                    </tr>
+                    
+                    <tr>
+                      <td class="left mono">3260</td>
+                      <td class="left namewrap">威剛</td>
+                      <td class="left">TWO</td>
+                      <td>3,067,962,616</td>
+                      <td>9</td>
+                      <td>0.99089</td>
+                      <td>0.00000</td>
+                      <td>1.0</td>
+                      <td>否</td>
+                      <td>是</td>
+                    </tr>
+                    
+                    <tr>
+                      <td class="left mono">6274</td>
+                      <td class="left namewrap">台燿</td>
+                      <td class="left">TWO</td>
+                      <td>3,017,961,760</td>
+                      <td>10</td>
+                      <td>0.98975</td>
+                      <td>0.00000</td>
+                      <td>1.0</td>
+                      <td>否</td>
+                      <td>是</td>
+                    </tr>
+                    
+                    <tr>
+                      <td class="left mono">5289</td>
+                      <td class="left namewrap">宜鼎</td>
+                      <td class="left">TWO</td>
+                      <td>2,575,642,824</td>
+                      <td>11</td>
+                      <td>0.98861</td>
+                      <td>0.00000</td>
+                      <td>1.0</td>
+                      <td>否</td>
+                      <td>是</td>
+                    </tr>
+                    
+                    <tr>
+                      <td class="left mono">5340</td>
+                      <td class="left namewrap">建榮</td>
+                      <td class="left">TWO</td>
+                      <td>2,497,128,372</td>
+                      <td>12</td>
+                      <td>0.98747</td>
+                      <td>0.00000</td>
+                      <td>1.0</td>
+                      <td>否</td>
+                      <td>是</td>
+                    </tr>
+                    
+                    <tr>
+                      <td class="left mono">5274</td>
+                      <td class="left namewrap">信驊</td>
+                      <td class="left">TWO</td>
+                      <td>2,400,949,515</td>
+                      <td>13</td>
+                      <td>0.98633</td>
+                      <td>0.00000</td>
+                      <td>1.0</td>
+                      <td>否</td>
+                      <td>是</td>
+                    </tr>
+                    
+                    <tr>
+                      <td class="left mono">6223</td>
+                      <td class="left namewrap">旺矽</td>
+                      <td class="left">TWO</td>
+                      <td>2,254,495,750</td>
+                      <td>14</td>
+                      <td>0.98519</td>
+                      <td>0.00000</td>
+                      <td>1.0</td>
+                      <td>否</td>
+                      <td>是</td>
+                    </tr>
+                    
+                    <tr>
+                      <td class="left mono">3363</td>
+                      <td class="left namewrap">上詮</td>
+                      <td class="left">TWO</td>
+                      <td>2,101,211,702</td>
+                      <td>15</td>
+                      <td>0.98405</td>
+                      <td>0.00000</td>
+                      <td>1.0</td>
+                      <td>否</td>
+                      <td>是</td>
+                    </tr>
+                    
+                    <tr>
+                      <td class="left mono">3374</td>
+                      <td class="left namewrap">精材</td>
+                      <td class="left">TWO</td>
+                      <td>2,041,341,146</td>
+                      <td>16</td>
+                      <td>0.98292</td>
+                      <td>0.00000</td>
+                      <td>1.0</td>
+                      <td>否</td>
+                      <td>是</td>
+                    </tr>
+                    
+                    <tr>
+                      <td class="left mono">6290</td>
+                      <td class="left namewrap">良維</td>
+                      <td class="left">TWO</td>
+                      <td>1,799,122,141</td>
+                      <td>17</td>
+                      <td>0.98178</td>
+                      <td>0.00000</td>
+                      <td>1.0</td>
+                      <td>否</td>
+                      <td>是</td>
+                    </tr>
+                    
+                    <tr>
+                      <td class="left mono">8069</td>
+                      <td class="left namewrap">元太</td>
+                      <td class="left">TWO</td>
+                      <td>1,719,001,298</td>
+                      <td>18</td>
+                      <td>0.98064</td>
+                      <td>0.00000</td>
+                      <td>1.0</td>
+                      <td>否</td>
+                      <td>是</td>
+                    </tr>
+                    
+                    <tr>
+                      <td class="left mono">5347</td>
+                      <td class="left namewrap">世界</td>
+                      <td class="left">TWO</td>
+                      <td>1,628,465,625</td>
+                      <td>19</td>
+                      <td>0.97950</td>
+                      <td>0.00000</td>
+                      <td>1.0</td>
+                      <td>否</td>
+                      <td>是</td>
+                    </tr>
+                    
+                    <tr>
+                      <td class="left mono">7751</td>
+                      <td class="left namewrap">竑騰</td>
+                      <td class="left">TWO</td>
+                      <td>1,542,040,551</td>
+                      <td>20</td>
+                      <td>0.97836</td>
+                      <td>0.00000</td>
+                      <td>1.0</td>
+                      <td>否</td>
+                      <td>是</td>
+                    </tr>
+                    
+                </tbody>
+              </table>
+              <div class="note">註：表格數值欄位統一顯示至小數點後 5 位（成交金額/排名除外）。</div>
+            </div>
+            
+
+  <div class="card">
+    <h2>權益曲線</h2>
+    <div class="note">
+      檔案：<code>C:\TradingSystem\data\out\runs\20260221_113809\equity_compare.html</code>（可直接用瀏覽器開啟）
+    </div>
+    <iframe src="../equity_compare.html" style="width:100%; height:520px; border:1px solid #eee; border-radius:12px; margin-top:10px"></iframe>
+  </div>
+
+</div>
+</body>
+</html>

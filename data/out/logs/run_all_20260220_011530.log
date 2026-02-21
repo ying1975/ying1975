@@ -1,0 +1,97 @@
+============================================================ 
+[RUN_ALL] VERSION=20260219_FINAL_STABLE
+[RUN_ALL] RUN_ID=20260220_011530
+[RUN_ALL] RUN_DIR=C:\TradingSystem\data\out\runs\20260220_011530
+[RUN_ALL] started=2026/02/20 ¶g¤­  1:15:30.58
+============================================================
+[PIPELINE_STATUS] reset run_id=20260220_011530
+[PIPELINE_STATUS] json=C:\TradingSystem\data\out\runs\20260220_011530\PIPELINE_STATUS.json
+[PIPELINE_STATUS] txt =C:\TradingSystem\data\out\runs\20260220_011530\PIPELINE_STATUS.txt
+===============================
+[RUN_ALL] STAGE=fetch TRY=1/3
+===============================
+[PIPELINE_STATUS] stage=fetch status=RUNNING overall=RUNNING
+[PIPELINE_STATUS] json=C:\TradingSystem\data\out\runs\20260220_011530\PIPELINE_STATUS.json
+[PIPELINE_STATUS] txt =C:\TradingSystem\data\out\runs\20260220_011530\PIPELINE_STATUS.txt
+[CMD] call "C:\TradingSystem\run_daily_parts.bat" fetch
+===============================
+[V7] PARTS  RUN_ID=20260220_011530
+[V7] PARTS  RUN_DIR=C:\TradingSystem\data\out\runs\20260220_011530
+===============================
+===============================
+[V7] FETCH (RUN_ID=20260220_011530)
+===============================
+[FETCH] ok. log="C:\TradingSystem\data\out\runs\20260220_011530\fetch.log"
+[PIPELINE_STATUS] stage=fetch status=SUCCESS overall=SUCCESS
+[PIPELINE_STATUS] json=C:\TradingSystem\data\out\runs\20260220_011530\PIPELINE_STATUS.json
+[PIPELINE_STATUS] txt =C:\TradingSystem\data\out\runs\20260220_011530\PIPELINE_STATUS.txt
+===============================
+[RUN_ALL] STAGE=prepare TRY=1/1
+===============================
+[PIPELINE_STATUS] stage=prepare status=RUNNING overall=RUNNING
+[PIPELINE_STATUS] json=C:\TradingSystem\data\out\runs\20260220_011530\PIPELINE_STATUS.json
+[PIPELINE_STATUS] txt =C:\TradingSystem\data\out\runs\20260220_011530\PIPELINE_STATUS.txt
+[CMD] call "C:\TradingSystem\run_daily_parts.bat" prepare
+===============================
+[V7] PARTS  RUN_ID=20260220_011530
+[V7] PARTS  RUN_DIR=C:\TradingSystem\data\out\runs\20260220_011530
+===============================
+===============================
+[V7] PREPARE (RUN_ID=20260220_011530)
+===============================
+[PREPARE] ok. log="C:\TradingSystem\data\out\runs\20260220_011530\prepare.log"
+[PIPELINE_STATUS] stage=prepare status=SUCCESS overall=SUCCESS
+[PIPELINE_STATUS] json=C:\TradingSystem\data\out\runs\20260220_011530\PIPELINE_STATUS.json
+[PIPELINE_STATUS] txt =C:\TradingSystem\data\out\runs\20260220_011530\PIPELINE_STATUS.txt
+===============================
+[RUN_ALL] STAGE=quality TRY=1/1
+===============================
+[PIPELINE_STATUS] stage=quality status=RUNNING overall=RUNNING
+[PIPELINE_STATUS] json=C:\TradingSystem\data\out\runs\20260220_011530\PIPELINE_STATUS.json
+[PIPELINE_STATUS] txt =C:\TradingSystem\data\out\runs\20260220_011530\PIPELINE_STATUS.txt
+[CMD] call "C:\TradingSystem\run_quality_gate.bat"
+[QUALITY_GATE] PASS: bad_close=17 (0.95%) bad_trade_value=6 (0.34%)
+[PIPELINE_STATUS] stage=quality status=SUCCESS overall=SUCCESS
+[PIPELINE_STATUS] json=C:\TradingSystem\data\out\runs\20260220_011530\PIPELINE_STATUS.json
+[PIPELINE_STATUS] txt =C:\TradingSystem\data\out\runs\20260220_011530\PIPELINE_STATUS.txt
+===============================
+[RUN_ALL] STAGE=oneclick TRY=1/2
+===============================
+[PIPELINE_STATUS] stage=oneclick status=RUNNING overall=RUNNING
+[PIPELINE_STATUS] json=C:\TradingSystem\data\out\runs\20260220_011530\PIPELINE_STATUS.json
+[PIPELINE_STATUS] txt =C:\TradingSystem\data\out\runs\20260220_011530\PIPELINE_STATUS.txt
+[CMD] call "C:\TradingSystem\run_daily_parts.bat" oneclick
+===============================
+[V7] PARTS  RUN_ID=20260220_011530
+[V7] PARTS  RUN_DIR=C:\TradingSystem\data\out\runs\20260220_011530
+===============================
+===============================
+[V7] ONECLICK (RUN_ID=20260220_011530)
+===============================
+[ONECLICK] failed. see "C:\TradingSystem\data\out\runs\20260220_011530\oneclick.log"
+[RUN_ALL] STAGE=oneclick RC=
+[RUN_ALL] retry in 15 sec...
+===============================
+[RUN_ALL] STAGE=oneclick TRY=2/2
+===============================
+[PIPELINE_STATUS] stage=oneclick status=RUNNING overall=RUNNING
+[PIPELINE_STATUS] json=C:\TradingSystem\data\out\runs\20260220_011530\PIPELINE_STATUS.json
+[PIPELINE_STATUS] txt =C:\TradingSystem\data\out\runs\20260220_011530\PIPELINE_STATUS.txt
+[CMD] call "C:\TradingSystem\run_daily_parts.bat" oneclick
+===============================
+[V7] PARTS  RUN_ID=20260220_011530
+[V7] PARTS  RUN_DIR=C:\TradingSystem\data\out\runs\20260220_011530
+===============================
+===============================
+[V7] ONECLICK (RUN_ID=20260220_011530)
+===============================
+[ONECLICK] failed. see "C:\TradingSystem\data\out\runs\20260220_011530\oneclick.log"
+[RUN_ALL] STAGE=oneclick RC=
+[PIPELINE_STATUS] stage=oneclick status=FAILED overall=FAILED
+[PIPELINE_STATUS] json=C:\TradingSystem\data\out\runs\20260220_011530\PIPELINE_STATUS.json
+[PIPELINE_STATUS] txt =C:\TradingSystem\data\out\runs\20260220_011530\PIPELINE_STATUS.txt
+[PIPELINE_STATUS] stage=overall status=FAILED overall=FAILED
+[PIPELINE_STATUS] json=C:\TradingSystem\data\out\runs\20260220_011530\PIPELINE_STATUS.json
+[PIPELINE_STATUS] txt =C:\TradingSystem\data\out\runs\20260220_011530\PIPELINE_STATUS.txt
+[RUN_ALL] FAILED
+[RUN_ALL] finished=2026/02/20 ¶g¤­  1:15:50.24

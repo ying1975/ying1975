@@ -1,0 +1,18 @@
+timestamp: 2026-02-15T11:38:17
+mode: pre
+run_key: pre||C:\TradingSystem\data\prepared\daily_input_20260210_235959.csv||93e625edb9216f3c67753d0380b2f61e6a63dc8683afeb848e1d432b0bbc2be2||C:\TradingSystem\data\out\_bt_tmp\20260210\daily_top20.csv
+input: C:\TradingSystem\data\prepared\daily_input_20260210_235959.csv
+input_sha256: 93e625edb9216f3c67753d0380b2f61e6a63dc8683afeb848e1d432b0bbc2be2
+output: C:\TradingSystem\data\out\_bt_tmp\20260210\daily_out.csv
+top20: C:\TradingSystem\data\out\_bt_tmp\20260210\daily_top20.csv
+result: SUCCESS
+used_core: PRIMARY
+log: C:\TradingSystem\logs\oneclick_pre_daily_input_20260210_235959_20260215_113816.log
+primary_returncode: 0
+fallback_returncode: 
+output_exists: True
+output_bytes: 96809
+top20_exists: True
+top20_bytes: 1470
+output_sha256: b9ad470f3478a44ccaa50b23261fdbbea97fba7c102ca81527063ad86c9896fc
+top20_sha256: 42b4ebb68af2f8a5817eca7e0566a36b9155f56b67e4c48b41c025b592682d19

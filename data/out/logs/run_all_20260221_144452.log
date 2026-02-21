@@ -1,0 +1,14 @@
+============================================================ 
+[RUN_ALL] RUN_ID=20260221_144452 
+[RUN_ALL] RUN_DIR=C:\TradingSystem\data\out\runs\20260221_144452 
+[RUN_ALL] started=2026/02/21 ¶g¤» 14:44:52.54 
+============================================================ 
+[RUN_ALL] STAGE=fetch TRY=1/1 
+[RUN_ALL] STAGE=fetch RC=0 
+[RUN_ALL] STAGE=prepare TRY=1/1 
+[RUN_ALL] STAGE=prepare RC=0 
+[RUN_ALL] STAGE=oneclick TRY=1/1 
+[RUN_ALL] STAGE=oneclick RC=0 
+[RUN_ALL] STAGE=report TRY=1/2 
+[RUN_ALL] STAGE=report RC=0 
+[RUN_ALL] SUCCESS 

@@ -1,0 +1,15 @@
+{
+  "input": "C:\\TradingSystem\\data\\daily_input.csv",
+  "rows": 1789,
+  "bad_close": 17,
+  "bad_close_pct": 0.009503,
+  "bad_trade_value": 6,
+  "bad_trade_value_pct": 0.003354,
+  "thresholds": {
+    "max_bad_close_pct": 0.01,
+    "max_bad_trade_value_pct": 0.005,
+    "min_rows": 800
+  },
+  "mode": "fail",
+  "result": "PASS"
+}

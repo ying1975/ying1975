@@ -1,0 +1,15 @@
+updated_at: 2026-02-20 01:15:50
+run_id: 20260220_011530
+overall_status: FAILED
+
+[fetch] status=SUCCESS at=2026-02-20 01:15:31
+
+[prepare] status=SUCCESS at=2026-02-20 01:15:31
+
+[quality] status=SUCCESS at=2026-02-20 01:15:33
+
+[oneclick] status=FAILED at=2026-02-20 01:15:50
+  msg: oneclick failed; see C:\TradingSystem\data\out\logs\run_all_20260220_011530.log
+
+[overall] status=FAILED at=2026-02-20 01:15:50
+  msg: run_all failed; see C:\TradingSystem\data\out\logs\run_all_20260220_011530.log

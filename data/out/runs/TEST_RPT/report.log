@@ -1,0 +1,13 @@
+===============================
+[V7] RUN_REPORT NO_LATEST
+RUN_ID=TEST_RPT
+RUN_DIR=C:\TradingSystem\data\out\runs\TEST_RPT
+===============================
+===============================
+[V7] STEP: EQUITY_COMPARE
+===============================
+[CMD] "EQUITY_COMPARE"   "C:\Python312\python.exe" "C:\TradingSystem\app\backtest\strategy_with_risk.py"   --run_id "TEST_RPT" --out_dir "C:\TradingSystem\data\out\runs\TEST_RPT"   --strategy trade_value --topN 5 --risk_on 0.55 --risk_mid 0.48
+'"EQUITY_COMPARE"' 不是內部或外部命令、可執行的程式或批次檔。
+[RC]=1
+[RUN_REPORT] FAILED rc=1
+  LOG : C:\TradingSystem\data\out\runs\TEST_RPT\report.log

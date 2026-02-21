@@ -1,0 +1,54 @@
+{
+  "updated_at": "2026-02-21 14:27:42",
+  "run_id": "20260221_113809",
+  "strategy": "trade_value",
+  "topN": 5,
+  "risk_on": 0.55,
+  "risk_mid": 0.48,
+  "costs": {
+    "commission": 0.001425,
+    "sell_tax": 0.003,
+    "slippage": 0.0005
+  },
+  "bt_root": "C:\\TradingSystem\\data\\out\\_bt_tmp",
+  "days": 4,
+  "stats": {
+    "none": {
+      "final_equity": 1017146.7500343531,
+      "total_return": 0.017146750034353175,
+      "avg_daily_return": 0.004779080369055166,
+      "daily_volatility": 0.03688829257238227,
+      "annual_return_est": 1.204328253001902,
+      "annual_vol_est": 0.5855834906178876,
+      "sharpe": 2.056629451303581,
+      "max_drawdown": 0.04973324392047536,
+      "traded_days": 4,
+      "no_trade_days": 0
+    },
+    "tier": {
+      "final_equity": 1000000.0,
+      "total_return": 0.0,
+      "avg_daily_return": 0.0,
+      "daily_volatility": 0.0,
+      "annual_return_est": 0.0,
+      "annual_vol_est": 0.0,
+      "sharpe": 0.0,
+      "max_drawdown": 0.0,
+      "traded_days": 0,
+      "no_trade_days": 4
+    },
+    "continuous": {
+      "final_equity": 1000000.0,
+      "total_return": 0.0,
+      "avg_daily_return": 0.0,
+      "daily_volatility": 0.0,
+      "annual_return_est": 0.0,
+      "annual_vol_est": 0.0,
+      "sharpe": 0.0,
+      "max_drawdown": 0.0,
+      "traded_days": 0,
+      "no_trade_days": 4
+    }
+  },
+  "csv": "C:\\TradingSystem\\data\\out\\runs\\20260221_113809\\equity_compare.csv"
+}

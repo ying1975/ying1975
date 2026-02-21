@@ -1,0 +1,17 @@
+updated_at: 2026-02-20 21:49:04
+run_id: 20260220_214843
+overall_status: FAILED
+
+[fetch] status=SUCCESS at=2026-02-20 21:48:44
+
+[prepare] status=SUCCESS at=2026-02-20 21:48:44
+
+[quality] status=SUCCESS at=2026-02-20 21:48:46
+
+[oneclick] status=SUCCESS at=2026-02-20 21:48:48
+
+[report] status=FAILED at=2026-02-20 21:49:04
+  msg: report failed; see C:\TradingSystem\data\out\logs\run_all_20260220_214843.log
+
+[overall] status=FAILED at=2026-02-20 21:49:04
+  msg: failed; see C:\TradingSystem\data\out\logs\run_all_20260220_214843.log
